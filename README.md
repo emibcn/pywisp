@@ -1,7 +1,7 @@
 # Pyradio installation
 ## Install pyradio
 ```shell
-pip install --user git+https://github.com/emibcn/pyradio.git
+pip3 install --user git+https://github.com/emibcn/pyradio.git
 ```
 
 ## Configure pyradio
