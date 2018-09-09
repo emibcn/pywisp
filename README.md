@@ -24,7 +24,7 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   --conf CONF           Reads configuration from this file instead of default
-                        (default: /home/emi/.pyradio)
+                        (default: $HOME/.pyradio)
 ```
 
 
