@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.com/emibcn/pyradio.svg?branch=master)](https://travis-ci.com/emibcn/pyradio)
+
+
 # Pyradio installation
 ## Install pyradio
 ```shell
