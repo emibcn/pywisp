@@ -80,6 +80,7 @@ optional arguments:
   --url              Gets an authenticated URL to connect to the device using
                      browser (default: False)
   --ssh              Connects to device using SSH (default: False)
+  --cmd CMD          Connects to device and run a command (default: None)
 ```
 
 
@@ -101,113 +102,15 @@ mt = /var/backups/mywisp/mt/
 ```
 
 # WISP infrastructure and host authentication definitions `${env:HOME}/MyWISP/wisp.py`
-In this example, we hardcode relations between IPs, some device names, users and passwords. We could be getting those relations from where ever, for example, an SQL database, a secure wallet downloaded from an S3, an spreadsheet at GoogleDocs (sic), an internal REST API, etc. Examples are welcome via pull request.
+In [this example](/examples/Wisp_1.py), we hardcode relations between IPs, some device names, users and passwords. We could be getting those relations from where ever, for example, an SQL database, a secure wallet downloaded from an S3, an spreadsheet at GoogleDocs (sic), an internal REST API, etc. Examples are welcome via pull request.
 
-You can add more types of devices subclassing `SSHDevice` and instantiating it correctly from your `wisp.py`. If you do so, I appreciate pull requests ;) 
+You can add more types of devices (for example, Mimosa) subclassing `SSHDevice` and instantiating it correctly from your `wisp.py`. If you do so, I appreciate pull requests ;) 
 
 You can create a complete subclassed `Wisp` object and pass it to `Pyradio` on instantiation. This way you can use Pyradio from within other projects, like from your Django APP or from your Zabbix scripts, mantaining your infrastructure and authentication mechanisms centralized.
 
-```python
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-import os
-
-# Internal imports
-from pyradio.aircontrol import ACDevice, int2ip, is_ip
-from pyradio.mikrotik import MTDevice
-from pyradio.sshdevice import backup_devices
-
-ID_RSA = os.getenv('HOME') + "/.ssh/id_rsa.mw"
-PASSWORD = "MyNotSoSecurePassword"
-PASSWORD_CLIENT = "MyNotSoSecurePasswordForClients"
-
-class MyWISP():
-   '''pyradio.Wisp mixin implementation'''
-   
-   def get_ac_devices(self, devices=[]):
-      '''Generate antennas list (with credentials)'''
-      antenas = []
-      for dev in devices:
-         password = PASSWORD
-         
-         if 'hostname' in dev['properties'] and dev['properties']['hostname'].startswith('AF'):
-            password = password[:8]
-         
-         antenas.append(ACDevice(dev, username='admin', password=password, rsa=ID_RSA))
-      
-      return antenas
-
-
-   def get_ac_brs(self, from_br=None):
-      '''Generate antennas list (with credentials) only of BRs'''
-      if from_br is None:
-         repetidors = self.ac.getDevices(name_starts="br")
-      else:
-         repetidors = self.ac.getDevices(name=frombr)
-      
-      repes = []
-      for repetidor in repetidors:
-         try:
-            repes.append( ACDevice(repetidor, username='admin', password=PASSWORD, rsa=ID_RSA) )
-         except (KeyboardInterrupt, SystemExit):
-            raise
-         except Exception as e:
-            print("There was a problem connecting to {}: {}".format(repe.name, str(e)))
-            continue
-      return repes
-
-
-   def get_mt_devices(self):
-      '''Generate antennas list (with credentials)'''
-      return self.get_aps()
-
-
-   def get_aps_ips(self):
-      return [
-            "10.111.0." + str(num) 
-            for num in [5, 6, 7, 8, 9, 13, 14, 16, 17, 18, 19, 20, 26]
-         ]
-
-
-   def get_aps(self):
-      return [
-         MTDevice({}, ip=ip, username='admin', password=PASSWORD, rsa=ID_RSA)
-         for ip in self.get_aps_ips()
-      ]
-
-   def get_host(self, name, deep=False, from_br=None):
-   
-      # Per IP
-      if is_ip(name) and name in self.get_aps_ips():
-            return [MTDevice({}, username="admin", password=PASSWORD, ip=name, rsa=ID_RSA)]
-
-      # Aircontrol
-      else:
-         
-         # Get devices list
-         clients = self.ac.getDevices(name=name)
-         
-         # Find device
-         devices = []
-         for client in clients:
-            
-            # Bug AF old
-            if client['properties']['hostname'].startswith('AF'):
-               password = PASSWORD[:8]
-            else:
-               password = PASSWORD
-            
-            print("Downloading {} - {}".format(client['properties']['hostname'], client['properties']['mac']))
-            devices.append(ACDevice(client, username='admin', password=password, rsa=ID_RSA))
-
-         return devices
-
-      return []
-```
 
 # TODO list
 - [ ] Move `print`s and similars to a good logging system.
-- [ ] Create examples repo (useful for testing, too)
+- [x] Create examples repo (useful for testing, too)
 - [ ] Create more and useful documentation
 - [ ] Testing, testing, testing...
