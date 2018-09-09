@@ -7,6 +7,15 @@ WISP declaration example
 In this example, we hardcode relations between IPs, some device names,
 users and passwords, while using some tools from AirControl or from
 devices DHCP servers.
+
+For this example to work from command line, `~/.pyradio` must contain 
+(assuming this file is at `${HOME}/MyWISP/` ):
+```
+[wisp]
+path = ${env:HOME}/MyWISP/
+module = Wisp_1
+class = MyWISP
+```
 '''
 
 import os
@@ -20,7 +29,7 @@ ID_RSA = os.getenv('HOME') + "/.ssh/id_rsa.mw"
 PASSWORD = "MyNotSoSecurePassword"
 PASSWORD_CLIENT = "MyNotSoSecurePasswordForSomeClients"
 
-class MyWifi():
+class MyWISP():
    '''pyradio.Wisp mixin implementation'''
    
    def get_ac_devices(self, devices=[]):
