@@ -5,10 +5,10 @@ pip install --user git+https://github.com/emibcn/pyradio.git
 ```
 
 ## Configure pyradio
-Then configure as per [~/.pyradio](#Pyradio config file: `~/.pyradio`)
+Then configure as per [~/.pyradio](#pyradio-config-file-pyradio)
 
 Finally, create the python script which implements the WISP infrastructure and authentication
-mechanisms, as per [wisp.py](#WISP infrastructure and host authentication definitions `${env:HOME}/MyWISP/wisp.py`)
+mechanisms, as per [wisp.py](#pyradio-config-file-pyradio)
 
 # Pyradio usage
 ```
