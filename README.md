@@ -28,6 +28,7 @@ optional arguments:
 ```
 
 
+### Backup all Ubiquiti's devices
 ```
 usage: pyradio backup_ac [-h] [--retries] [PATH]
 
@@ -39,7 +40,7 @@ optional arguments:
   --retries   Retries for every device before stop trying (default: 3)
 ```
 
-
+### Backup all Mikrotik's devices
 ```
 usage: pyradio backup_mt [-h] [--retries] [PATH]
 
@@ -51,7 +52,7 @@ optional arguments:
   --retries   Retries for every device before stop trying (default: 3)
 ```
 
-
+### Host lookup and actions
 ```
 usage: pyradio host [-h] [--deep] [--from-br FROM_BR] [--getname] [--getjson]
                     [--getip] [--getid] [--getmac] [--getdhcp] [--getwifi]
@@ -82,7 +83,6 @@ optional arguments:
 ```
 
 
-
 # Pyradio config file: `~/.pyradio`
 ```
 [wisp]
@@ -96,11 +96,17 @@ user = admin
 password = MyNotSoSecurePassword
 
 [backup]
-ac = /tmp/meswifi/ac/
-mt = /tmp/meswifi/mt/
+ac = /var/backups/mywisp/ac/
+mt = /var/backups/mywisp/mt/
 ```
 
 # WISP infrastructure and host authentication definitions `${env:HOME}/MyWISP/wisp.py`
+In this example, we hardcode relations between IPs, some device names, users and passwords. We could be getting those relations from where ever, for example, an SQL database, a secure wallet downloaded from an S3, an spreadsheet at GoogleDocs (sic), an internal REST API, etc. Examples are welcome via pull request.
+
+You can add more types of devices subclassing `SSHDevice` and instantiating it correctly from your `wisp.py`. If you do so, I appreciate pull requests ;) 
+
+You can create a complete subclassed `Wisp` object and pass it to `Pyradio` on instantiation. This way you can use Pyradio from within other projects, like from your Django APP or from your Zabbix scripts, mantaining your infrastructure and authentication mechanisms centralized.
+
 ```python
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
@@ -147,7 +153,7 @@ class MyWISP():
          except (KeyboardInterrupt, SystemExit):
             raise
          except Exception as e:
-            print("Hi ha hagut un problema connectant amb {}: {}".format(repe.name, str(e)))
+            print("There was a problem connecting to {}: {}".format(repe.name, str(e)))
             continue
       return repes
 
@@ -180,10 +186,7 @@ class MyWISP():
       else:
          
          # Get devices list
-         if not deep:
-            clients = self.ac.getDevices(name=name)
-         else:
-            clients = self.get_aircontrol_deep(name, frombr)
+         clients = self.ac.getDevices(name=name)
          
          # Find device
          devices = []
@@ -195,7 +198,7 @@ class MyWISP():
             else:
                password = PASSWORD
             
-            print("Descarreguem {} - {}".format(client['properties']['hostname'], client['properties']['mac']))
+            print("Downloading {} - {}".format(client['properties']['hostname'], client['properties']['mac']))
             devices.append(ACDevice(client, username='admin', password=password, rsa=ID_RSA))
 
          return devices
