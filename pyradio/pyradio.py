@@ -16,12 +16,18 @@ class Pyradio():
    # https://stackoverflow.com/questions/18462610/argumentparser-epilog-and-description-formatting-in-conjunction-with-argumentdef
    class MyCustomFormatter(argparse.ArgumentDefaultsHelpFormatter, argparse.RawDescriptionHelpFormatter):
       pass
-      
-   def __init__(self):
-      
    
+   
+   # Parses arguments and configurations
+   def __init__(self, wisp=None):
+         
       self.args, self.arg_parser, self.arg_sub_parser = self.parse_arguments()
       self.config, self.wisp = self.parse_configuration(self.args.conf)
+      
+      # Allow to create a WISP externally (useful when imported as a library)
+      if wisp:
+         self.wisp = wisp
+   
 
    def parse_device(self, device):
       '''Parses a device using arguments passed to program'''
