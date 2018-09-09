@@ -204,5 +204,10 @@ class MyWISP():
          return devices
 
       return []
-
 ```
+
+# TODO list
+- [ ] Move `print`s and similars to a good logging system.
+- [ ] Create examples repo (useful for testing, too)
+- [ ] Create more and useful documentation
+- [ ] Testing, testing, testing...
