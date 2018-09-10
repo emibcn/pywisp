@@ -3,8 +3,6 @@
 
 from pyradio.sshdevice import SSHDevice
 
-from pprint import pprint
-
 STATUS = {
    "bound": "online",
    "waiting": "offline",

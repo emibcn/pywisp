@@ -4,7 +4,7 @@
 import os, requests, ipaddress, datetime, json
 from pyradio.sshdevice import SSHDevice
 
-from pprint import pprint
+from pprint import pformat
 
 # Disable warnings
 import urllib3
@@ -211,8 +211,7 @@ class ACSession():
       
       # This means something went wrong.
       if resp.status_code > 299:
-         pprint(body)
-         raise Exception(u'{} {} {}: {}'.format(method.upper(), path, resp.status_code, resp.text))
+         raise Exception(u'{} {} {}: {} ({})'.format(method.upper(), path, resp.status_code, resp.text, pformat(body)))
       
       return resp
       

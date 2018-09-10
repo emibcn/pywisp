@@ -18,8 +18,10 @@ class Pyradio():
       pass
    
    
-   # Parses arguments and configurations
    def __init__(self, wisp=None):
+      '''Parses arguments and configurations'''
+      
+      self.log = self.__setup_logger()
          
       self.args, self.arg_parser, self.arg_sub_parser = self.parse_arguments()
       self.config, self.wisp = self.parse_configuration(self.args.conf)
@@ -27,6 +29,28 @@ class Pyradio():
       # Allow to create a WISP externally (useful when imported as a library)
       if wisp:
          self.wisp = wisp
+   
+   def __setup_logger(self, name=__name__):
+      '''Setup a logger'''
+      class OneLineExceptionFormatter(logging.Formatter):
+          def formatException(self, exc_info):
+              result = super().formatException(exc_info)
+              return repr(result)
+       
+          def format(self, record):
+              result = super().format(record)
+              if record.exc_text:
+                  result = result.replace("n", "")
+              return result
+ 
+      handler = logging.StreamHandler()
+      formatter = OneLineExceptionFormatter(logging.BASIC_FORMAT)
+      handler.setFormatter(formatter)
+      log = logging.getLogger(name)
+      log.setLevel(os.environ.get("LOGLEVEL", "INFO"))
+      log.addHandler(handler)
+      
+      return log
    
 
    def parse_device(self, device):
@@ -138,7 +162,7 @@ class Pyradio():
       
       args = parser.parse_args()
       
-      pprint(args)
+      self.log.debug('Arguments: %s' % args)
       
       return args, parser, sp
 
@@ -148,6 +172,7 @@ class Pyradio():
       config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
       
       wisp = None
+      wisp_conf = {'getlog': self.__setup_logger}
       
       if os.path.isfile(file_name):
          
@@ -157,35 +182,36 @@ class Pyradio():
             {"env": env_dict},
             source='<env>')
 
-         print("Loading", file_name)
+         self.log.debug("Loading %s" % file_name)
          config.read(file_name)
          
-         ac_conf = None
+         wisp_conf['ac_conf'] = None
          if 'ac' in config:
-            ac_conf = {name: value for name, value in config.items('ac')}
-            print("Loaded AC configuration: ", end="")
-            pprint(ac_conf)
+            wisp_conf['ac_conf'] = {name: value for name, value in config.items('ac')}
+            self.log.debug("Loaded AC configuration:  %s" % wisp_conf['ac_conf'])
          
          if 'wisp' in config:
-            print("Detected extra class for managing wisp.")
+            self.log.debug("Detected extra class for managing wisp.")
+            
             if 'path' in config['wisp'] and 'module' in config['wisp'] and 'class' in config['wisp']:
-               print("Detected WISP: {} || {} || {}".format(config['wisp']['path'], config['wisp']['module'], config['wisp']['class']))
+               self.log.debug("Detected WISP: %s || %s || %s" % (config['wisp']['path'], config['wisp']['module'], config['wisp']['class']))
                path = os.path.dirname( config['wisp']['path'] )
+               
                for (finder, name, _) in pkgutil.iter_modules([path]):
-                  print("Name:", name)
                   if name == config['wisp']['module']:
-                     print("Loading module {} from file '{}'...".format(config['wisp']['module'], config['wisp']['path']))
+                     self.log.debug("Loading module %s from file '%s'..." % (config['wisp']['module'], config['wisp']['path']))
                      loader = finder.find_module(name)
                      mod = loader.load_module()
                      cls = getattr(mod, config['wisp']['class'])
-                     print("Merging class {} to our WISP definition...".format(config['wisp']['class']))
-                     wisp = type('Wisp' + config['wisp']['class'], (cls,Wisp), {})(ac_conf)
-                     print("Wisp Class: " + type(wisp).__name__)
+                     
+                     self.log.debug("Merging class %s to our WISP definition..." % config['wisp']['class'])
+                     wisp = type('Wisp' + config['wisp']['class'], (cls,Wisp), {})(**wisp_conf)
+                     self.log.debug("Wisp Class: %s" % type(wisp).__name__)
          else:
-            wisp = Wisp()
+            wisp = Wisp(**wisp_conf)
           
       else:
-         print("No config file")
+         self.log.warning("No config file")
       
       return config, wisp
 
@@ -204,7 +230,7 @@ def main():
       if not retries and 'backup' in pyradio.config and 'retries' in pyradio.config['backup']:
          retries = pyradio.config['backup']['retries']
          
-      print('Backup AC devices to {}'.format(path))
+      pyradio.log.debug('Backup AC devices to %s' % (path))
       backup_devices(pyradio.wisp.get_ac_devices(), path, retries=retries)
    
    elif 'backup_mt_path' in pyradio.args:
@@ -216,12 +242,12 @@ def main():
       if not retries and 'backup' in pyradio.config and 'retries' in pyradio.config['backup']:
          retries = pyradio.config['backup']['retries']
          
-      print('Backup MT devices to {}'.format(path))
+      pyradio.log.debug('Backup MT devices to %s' % (path))
       backup_devices(pyradio.wisp.get_mt_devices(), path, retries=retries)
  
    # Reorder AirControl branches
    elif 'reorder_ac' in pyradio.args:
-      print('Reorder branches!')
+      pyradio.log.debug('Reorder branches!')
       pyradio.wisp.ac_reorder_branches()
  
    # Find host and print info about it or perform actions on it     
@@ -232,7 +258,7 @@ def main():
       # Get devices
       devices = pyradio.wisp.get_host(pyradio.args.host, deep=pyradio.args.deep, from_br=pyradio.args.from_br)
       if devices == None or len(devices) == 0:
-         print("[ERROR] No s'ha trobat cap dispositiu: '{}'".format(pyradio.args.host))
+         pyradio.log.error("No devices found: '%s'" % (pyradio.args.host))
          return 1
 
       # If its not a list, convert into it

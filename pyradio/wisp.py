@@ -13,12 +13,16 @@ class Wisp():
       "password": "admin",
    }
    __ac = None
+   log = None
    
-   def __init__(self, ac_conf=None):
+   def __init__(self, ac_conf=None, getlog=None):
+   
+      if getlog:
+         self.log = getlog(__name__)
+         
       if ac_conf:
          self.ac_conf = ac_conf
-         print("__init__: Loaded AC configuration: ", end="")
-         pprint(self.ac_conf)
+         self.log.debug("__init__: Loaded AC configuration: %s" % (self.ac_conf) )
    
    @property 
    def ac(self):
@@ -54,22 +58,22 @@ class Wisp():
 
 
    def get_aircontrol_deep(self, name, from_br=None):
-      print("Download BRs...")
+      self.log.info("Download BRs...")
       
       repetidors = self.get_ac_brs(from_br=None)
       
-      print("BRs found: {}".format(len(repetidors)))
+      self.log.info("BRs found: %s" % (len(repetidors)))
 
       clients_total = []
       clients_wifi = []
       for repetidor in repetidors:
          try:
-            print("Download wifi stations from {}".format(repe.name))
+            self.log.info("Download wifi stations from %s" % (repe.name))
             clients_wifi = repetidor.getWifiStations()
          except (KeyboardInterrupt, SystemExit):
             raise
          except Exception as e:
-            print("Hi ha hagut un problema connectant amb {}: {}".format(repe.name, str(e)))
+            self.log.warning("There was a problem connecting to %s: %s" % (repe.name, str(e)))
             continue
          
          clients = [
@@ -91,7 +95,7 @@ class Wisp():
          ]
          
          for client in clients:
-            print("{} - {} - {}".format(client['properties']['hostname'], client['properties']['mac'], client['properties']['ip']))
+            self.log.info("%s - %s - %s" % (client['properties']['hostname'], client['properties']['mac'], client['properties']['ip']))
          
          clients_total += clients
       
@@ -117,18 +121,15 @@ class Wisp():
       done = 0
       patchList = []
       for br in brs:
-         print("- {} ({})".format(br.name, br.id))
+         self.log.info("- %s (%s)" % (br.name, br.id))
          # For each client connectetd to it's SSID
          for client in clients:
             if client.ssid == br.ssid:
                if client.branch == br.id:
-                  print("   - {client} ({clessid})".format(
-                     client=client.name, 
-                     clessid=client.ssid, 
-                     ))
+                  self.log.info("   - %s (%s)" % (client.name, client.ssid))
                else:
                   done += 1
-                  print("   - Move {client} ({clid} - {clessid}) from {branch} to {brname} ({brid})".format(
+                  self.log.info("   - Move {client} ({clid} - {clessid}) from {branch} to {brname} ({brid})".format(
                      client=client.name, 
                      clid=client.id, 
                      clessid=client.ssid, 
@@ -143,4 +144,4 @@ class Wisp():
       # Send patches
       self.ac.patchDeviceList(patchList)
 
-      print("Done:", (done + 1))
+      self.log.info("Done: %d" % (done + 1))
