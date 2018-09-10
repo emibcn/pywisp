@@ -14,6 +14,7 @@ class SSHDevice:
 
    ip       = ""
    mac      = ""
+   __name   = ""
    username = ""
    password = ""
    rsa      = ""

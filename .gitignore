@@ -7,10 +7,11 @@ DEADJOE
 __pycache__/
 *.py[cod]
 
-# Distribution / packaging
+# Distribution / packaging / testing
 build/
 dist/
 *.egg-info/
+.pytest_cache/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

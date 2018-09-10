@@ -12,6 +12,7 @@ class Wisp():
       "user": "admin",
       "password": "admin",
    }
+   __ac = None
    
    def __init__(self, ac_conf=None):
       if ac_conf:
@@ -22,7 +23,7 @@ class Wisp():
    @property 
    def ac(self):
    
-      if not self._ac:
+      if not self.__ac:
          self.__ac = ACSession(self.ac_conf['url'], self.ac_conf['user'], self.ac_conf['password'])
          self.__ac.login()
       

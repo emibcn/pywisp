@@ -32,31 +32,31 @@ class Pyradio():
    def parse_device(self, device):
       '''Parses a device using arguments passed to program'''
       
-      if self.args.getname:
+      if 'getname' in self.args and self.args.getname:
          print(device.name)
-      if self.args.getid:
+      if 'getid' in self.args and self.args.getid:
          print(device.id)
-      if self.args.getip:
+      if 'getip' in self.args and self.args.getip:
          print(device.ip)
-      if self.args.getmac:
+      if 'getmac' in self.args and self.args.getmac:
          print(device.mac)
-      if self.args.getstatus:
+      if 'getstatus' in self.args and self.args.getstatus:
          print(device.status)
-      if self.args.getdhcp:
+      if 'getdhcp' in self.args and self.args.getdhcp:
          pprint(device.getDHCPLeases(bound=None))
-      if self.args.getwifi:
+      if 'getwifi' in self.args and self.args.getwifi:
          pprint(device.getWifiStatus())
-      if self.args.getwifistations:
+      if 'getwifistations' in self.args and self.args.getwifistations:
          pprint(device.getWifiStations())
-      if self.args.getjson:
+      if 'getjson' in self.args and self.args.getjson:
          pprint(device.data)
-      if self.args.url:
+      if 'url' in self.args and self.args.url:
          print(self.wisp.ac.getDevicesURL([device.id])[0]['url'])
-      if self.args.cmd:
+      if 'cmd' in self.args and self.args.cmd:
          stdin, stdout, stderr = device.command(args.cmd)
          print(stdout.read().decode(), end="")
          print(stderr.read().decode(), end="")
-      if self.args.ssh:
+      if 'ssh' in self.args and self.args.ssh:
          device.shell()
 
 

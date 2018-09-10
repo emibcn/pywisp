@@ -11,5 +11,4 @@ install:
   - pip install -r pyradio/requirements.txt
   - pip install .
 # command to run tests
-#script: pytest
-script: true
+script: pytest
