@@ -11,6 +11,13 @@ from pyradio.sshdevice import backup_devices
 
 class Pyradio():
 
+   log = None
+   args = None
+   arg_parser = None
+   args_sub_parser = None
+   config = None
+   wisp = None
+   
    # Permet mostrar l'epilog amb la llista ben formatada, mentre es 
    # mostren els arguments i els seus defaults formatats correctament
    # https://stackoverflow.com/questions/18462610/argumentparser-epilog-and-description-formatting-in-conjunction-with-argumentdef
@@ -21,7 +28,7 @@ class Pyradio():
    def __init__(self, wisp=None):
       '''Parses arguments and configurations'''
       
-      self.log = self.__setup_logger()
+      self.log = self.setup_logger()
          
       self.args, self.arg_parser, self.arg_sub_parser = self.parse_arguments()
       self.config, self.wisp = self.parse_configuration(self.args.conf)
@@ -30,7 +37,8 @@ class Pyradio():
       if wisp:
          self.wisp = wisp
    
-   def __setup_logger(self, name=__name__):
+   
+   def setup_logger(self, name=__name__):
       '''Setup a logger'''
       class OneLineExceptionFormatter(logging.Formatter):
           def formatException(self, exc_info):
@@ -172,7 +180,7 @@ class Pyradio():
       config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
       
       wisp = None
-      wisp_conf = {'getlog': self.__setup_logger}
+      wisp_conf = {'getlog': self.setup_logger}
       
       if os.path.isfile(file_name):
          

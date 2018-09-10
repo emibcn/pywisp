@@ -13,17 +13,43 @@ class Wisp():
       "password": "admin",
    }
    __ac = None
-   log = None
-   
+   __log = None
+   __getlogger = None
+
    def __init__(self, ac_conf=None, getlog=None):
    
       if getlog:
-         self.log = getlog(__name__)
+         self.getlogger = getlog
          
       if ac_conf:
          self.ac_conf = ac_conf
          self.log.debug("__init__: Loaded AC configuration: %s" % (self.ac_conf) )
-   
+
+   @property
+   def log(self):
+      if not self.__log:
+         self.__log = self.getlogger(__name__)
+
+      return self.__log
+
+   @log.setter
+   def log(self, log):
+      self.__log = log
+
+   @property
+   def getlogger(self):
+      if not self.__getlogger:
+         noop = lambda x, y: x
+         return lambda name: type('fakelogger', (object,), {'error': print, 'warning': print, 'info': noop, 'debug': noop})()
+
+      return self.__getlogger
+
+   @getlogger.setter
+   def getlogger(self, getlogger):
+      self.__getlogger = getlogger
+      self.log = None
+
+
    @property 
    def ac(self):
    

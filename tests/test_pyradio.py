@@ -13,11 +13,12 @@ class MyWisp(Wisp):
       return [MTDevice({}, username="admin", password="PASSWORD", ip=n, name=n) for n in name]
 
 # Instantiate the WISP and PyRadio
-pyradio = Pyradio(wisp=MyWisp(ac_conf={
+pyradio = Pyradio()
+pyradio.wisp = MyWisp(ac_conf={
       "url": "https://localhost:9082",
       "user": "admin",
       "password": "admin",
-}))
+}, getlog=pyradio.setup_logger)
 
 # Create some phantom arguments
 pyradio.args.host = "10.255.255.2"
