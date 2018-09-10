@@ -113,7 +113,10 @@ You can create a complete subclassed [`Wisp`](/pyradio/wisp.py) object and pass 
 
 
 # TODO list
-- [ ] Move `print`s and similars to a good logging system.
-- [x] Create examples repo (useful for testing, too)
+- [x] Move `print`s and similars to a ~~good~~ logging system.
+- [ ] Enhance logging system
+- [x] Create examples repo with one `wisp.py` example
+- [ ] Create more examples (useful for testing, too)
 - [ ] Create more and useful documentation
+- [x] Testing
 - [ ] Testing, testing, testing...
