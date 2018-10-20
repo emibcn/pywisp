@@ -6,10 +6,10 @@ from importlib import import_module
 from pprint import pprint
 
 # Internal imports
-from pyradio.wisp import Wisp
-from pyradio.sshdevice import backup_devices
+from pywisp.wisp import Wisp
+from pywisp.sshdevice import backup_devices
 
-class Pyradio():
+class PyWisp():
 
    log = None
    args = None
@@ -96,7 +96,7 @@ class Pyradio():
       '''Parses arguments passed to program into a dict'''
       
       parser.add_argument("--conf", type=str,
-                          default="{}/{}".format(os.getenv('HOME'), '.pyradio'),
+                          default="{}/{}".format(os.getenv('HOME'), '.pywisp'),
                           help="Reads configuration from this file instead of default")
       
       sp = parser.add_subparsers()
@@ -226,47 +226,47 @@ class Pyradio():
 
 def main():
    
-   pyradio = Pyradio()
+   pywisp = PyWisp()
    
    # Backup everything!
-   if 'backup_ac_path' in pyradio.args:
-      path = pyradio.args.backup_ac_path
-      if not path and 'backup' in pyradio.config and 'ac' in pyradio.config['backup']:
-         path = pyradio.config['backup']['ac']
+   if 'backup_ac_path' in pywisp.args:
+      path = pywisp.args.backup_ac_path
+      if not path and 'backup' in pywisp.config and 'ac' in pywisp.config['backup']:
+         path = pywisp.config['backup']['ac']
       
-      retries = pyradio.args.retries
-      if not retries and 'backup' in pyradio.config and 'retries' in pyradio.config['backup']:
-         retries = pyradio.config['backup']['retries']
+      retries = pywisp.args.retries
+      if not retries and 'backup' in pywisp.config and 'retries' in pywisp.config['backup']:
+         retries = pywisp.config['backup']['retries']
          
-      pyradio.log.debug('Backup AC devices to %s' % (path))
-      backup_devices(pyradio.wisp.get_ac_devices(), path, retries=retries)
+      pywisp.log.debug('Backup AC devices to %s' % (path))
+      backup_devices(pywisp.wisp.get_ac_devices(), path, retries=retries)
    
-   elif 'backup_mt_path' in pyradio.args:
-      path = pyradio.args.backup_mt_path
-      if not path and 'backup' in pyradio.config and 'mt' in pyradio.config['backup']:
-         path = pyradio.config['backup']['mt']
+   elif 'backup_mt_path' in pywisp.args:
+      path = pywisp.args.backup_mt_path
+      if not path and 'backup' in pywisp.config and 'mt' in pywisp.config['backup']:
+         path = pywisp.config['backup']['mt']
       
-      retries = pyradio.args.retries
-      if not retries and 'backup' in pyradio.config and 'retries' in pyradio.config['backup']:
-         retries = pyradio.config['backup']['retries']
+      retries = pywisp.args.retries
+      if not retries and 'backup' in pywisp.config and 'retries' in pywisp.config['backup']:
+         retries = pywisp.config['backup']['retries']
          
-      pyradio.log.debug('Backup MT devices to %s' % (path))
-      backup_devices(pyradio.wisp.get_mt_devices(), path, retries=retries)
+      pywisp.log.debug('Backup MT devices to %s' % (path))
+      backup_devices(pywisp.wisp.get_mt_devices(), path, retries=retries)
  
    # Reorder AirControl branches
-   elif 'reorder_ac' in pyradio.args:
-      pyradio.log.debug('Reorder branches!')
-      pyradio.wisp.ac_reorder_branches()
+   elif 'reorder_ac' in pywisp.args:
+      pywisp.log.debug('Reorder branches!')
+      pywisp.wisp.ac_reorder_branches()
  
    # Find host and print info about it or perform actions on it     
-   elif 'host' in pyradio.args:
+   elif 'host' in pywisp.args:
       # Optional lower host (insensitive)
-      pyradio.args.host = pyradio.args.host.lower().strip()
+      pywisp.args.host = pywisp.args.host.lower().strip()
       
       # Get devices
-      devices = pyradio.wisp.get_host(pyradio.args.host, deep=pyradio.args.deep, from_br=pyradio.args.from_br)
+      devices = pywisp.wisp.get_host(pywisp.args.host, deep=pywisp.args.deep, from_br=pywisp.args.from_br)
       if devices == None or len(devices) == 0:
-         pyradio.log.error("No devices found: '%s'" % (pyradio.args.host))
+         pywisp.log.error("No devices found: '%s'" % (pywisp.args.host))
          return 1
 
       # If its not a list, convert into it
@@ -275,7 +275,7 @@ def main():
       
       # Apply actions for every device found
       for device in devices:
-         pyradio.parse_device(device)
+         pywisp.parse_device(device)
    
    return 0
 

@@ -1,21 +1,21 @@
-[![Build Status](https://travis-ci.com/emibcn/pyradio.svg?branch=master)](https://travis-ci.com/emibcn/pyradio)
+[![Build Status](https://travis-ci.com/emibcn/pywisp.svg?branch=master)](https://travis-ci.com/emibcn/pywisp)
 
 
-# Pyradio installation
-## Install pyradio
+# PyWisp installation
+## Install pywisp
 ```shell
-pip3 install --user git+https://github.com/emibcn/pyradio.git
+pip3 install --user git+https://github.com/emibcn/pywisp.git
 ```
 
-## Configure pyradio
-Then configure as per [~/.pyradio](#pyradio-config-file-pyradio)
+## Configure PyWisp
+Then configure as per [~/.pywisp](#pywisp-config-file-pywisp)
 
 Finally, create the python script which implements the WISP infrastructure and authentication
 mechanisms, as per [wisp.py](#wisp-infrastructure-and-host-authentication-definitions-envhomemywispwisppy)
 
-# Pyradio usage
+# PyWisp usage
 ```
-usage: pyradio [-h] [--conf CONF] {backup_ac,backup_mt,reorder_ac,host} ...
+usage: pywisp [-h] [--conf CONF] {backup_ac,backup_mt,reorder_ac,host} ...
 
 positional arguments:
   {backup_ac,backup_mt,reorder_ac,host}
@@ -27,13 +27,13 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   --conf CONF           Reads configuration from this file instead of default
-                        (default: $HOME/.pyradio)
+                        (default: $HOME/.pywisp)
 ```
 
 
 ### Backup all Ubiquiti's devices
 ```
-usage: pyradio backup_ac [-h] [--retries] [PATH]
+usage: pywisp backup_ac [-h] [--retries] [PATH]
 
 positional arguments:
   PATH        Directory in which save backup files (default: None)
@@ -45,7 +45,7 @@ optional arguments:
 
 ### Backup all Mikrotik's devices
 ```
-usage: pyradio backup_mt [-h] [--retries] [PATH]
+usage: pywisp backup_mt [-h] [--retries] [PATH]
 
 positional arguments:
   PATH        Directory in which save backup files (default: None)
@@ -57,7 +57,7 @@ optional arguments:
 
 ### Host lookup and actions
 ```
-usage: pyradio host [-h] [--deep] [--from-br FROM_BR] [--getname] [--getjson]
+usage: pywisp host [-h] [--deep] [--from-br FROM_BR] [--getname] [--getjson]
                     [--getip] [--getid] [--getmac] [--getdhcp] [--getwifi]
                     [--getwifistations] [--getstatus] [--url] [--ssh]
                     [--cmd CMD]
@@ -87,7 +87,7 @@ optional arguments:
 ```
 
 
-# Pyradio config file: `~/.pyradio`
+# PyWisp config file: `~/.pywisp`
 ```
 [wisp]
 path = ${env:HOME}/MyWISP/
@@ -107,9 +107,9 @@ mt = /var/backups/mywisp/mt/
 # WISP infrastructure and host authentication definitions `${env:HOME}/MyWISP/wisp.py`
 In [this example](/examples/Wisp_1.py), we hardcode relations between IPs, some device names, users and passwords. We could be getting those relations from where ever, for example, an SQL database, a secure wallet downloaded from an S3, an spreadsheet at GoogleDocs (sic), an internal REST API, etc. Examples are welcome via pull request.
 
-You can add more types of devices (for example, Mimosa) subclassing [`SSHDevice`](/pyradio/sshdevice.py) and instantiating it correctly from your `wisp.py`. If you do so, I appreciate pull requests ;) 
+You can add more types of devices (for example, Mimosa) subclassing [`SSHDevice`](/pywisp/sshdevice.py) and instantiating it correctly from your `wisp.py`. If you do so, I appreciate pull requests ;) 
 
-You can create a complete subclassed [`Wisp`](/pyradio/wisp.py) object and pass it to `Pyradio` on instantiation. This way you can use Pyradio from within other projects, like from your Django APP or from your Zabbix scripts, mantaining your infrastructure and authentication mechanisms centralized.
+You can create a complete subclassed [`Wisp`](/pywisp/wisp.py) object and pass it to `PyWisp` on instantiation. This way you can use PyWisp from within other projects, like from your Django APP or from your Zabbix scripts, mantaining your infrastructure and authentication mechanisms centralized.
 
 
 # TODO list

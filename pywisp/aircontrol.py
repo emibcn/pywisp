@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os, requests, ipaddress, datetime, json
-from pyradio.sshdevice import SSHDevice
+from pywisp.sshdevice import SSHDevice
 
 from pprint import pformat
 

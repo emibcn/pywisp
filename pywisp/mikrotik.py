@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from pyradio.sshdevice import SSHDevice
+from pywisp.sshdevice import SSHDevice
 
 STATUS = {
    "bound": "online",
