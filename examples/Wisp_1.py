@@ -8,7 +8,7 @@ In this example, we hardcode relations between IPs, some device names,
 users and passwords, while using some tools from AirControl or from
 devices DHCP servers.
 
-For this example to work from command line, `~/.pyradio` must contain 
+For this example to work from command line, `~/.pywisp` must contain 
 (assuming this file is at `${HOME}/MyWISP/` ):
 ```
 [wisp]
@@ -21,16 +21,16 @@ class = MyWISP
 import os
 
 # Internal imports
-from pyradio.aircontrol import ACDevice, int2ip, is_ip
-from pyradio.mikrotik import MTDevice
-from pyradio.sshdevice import backup_devices
+from pywisp.aircontrol import ACDevice, int2ip, is_ip
+from pywisp.mikrotik import MTDevice
+from pywisp.sshdevice import backup_devices
 
 ID_RSA = os.getenv('HOME') + "/.ssh/id_rsa.mw"
 PASSWORD = "MyNotSoSecurePassword"
 PASSWORD_CLIENT = "MyNotSoSecurePasswordForSomeClients"
 
 class MyWISP():
-   '''pyradio.Wisp mixin implementation'''
+   '''pywisp.Wisp mixin implementation'''
    
    def get_ac_devices(self, devices=[]):
       '''Generate antennas list (with credentials)'''
