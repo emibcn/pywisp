@@ -185,7 +185,7 @@ class PyWisp():
       if os.path.isfile(file_name):
          
          # Populate the [env] section
-         env_dict = {name: os.path.expandvars(value) for name, value in os.environ.items()}
+         env_dict = {name: os.path.expandvars(value.replace('$', '$$')) for name, value in os.environ.items()}
          config.read_dict(
             {"env": env_dict},
             source='<env>')
