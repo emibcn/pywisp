@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os, requests, ipaddress, datetime, json
-from pywisp.sshdevice import SSHDevice
+from pywisp_emibcn.sshdevice import SSHDevice
 
 from pprint import pformat
 

@@ -1,14 +1,14 @@
 
 from setuptools import setup, find_packages
 
-VERSION = (0, 0, 7)
+VERSION = (0, 0, 8)
 __version__ = '.'.join(map(str, VERSION))
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read().replace('(/', '(https://github.com/emibcn/pywisp/blob/master/')
 
 setup(
-    name = 'pywisp-emibcn',
+    name = 'pywisp_emibcn',
     version = __version__,
     description = "Access AirControl2, AirOS & Mikrotik",
     long_description=long_description,
@@ -21,7 +21,7 @@ setup(
     },
     license = "GPLv3",
     platforms = ["any"],
-    packages = ['pywisp-emibcn'],
+    packages = ['pywisp_emibcn'],
     package_dir = {"": "."},
     py_modules=['pywisp', 'pywisp/mikrotik', 'pywisp/aircontrol', 'pywisp/sshdevice'],
     scripts = ["bin/pywisp"],

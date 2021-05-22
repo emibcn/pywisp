@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from pywisp.sshdevice import SSHDevice
+from pywisp_emibcn.sshdevice import SSHDevice
 
 STATUS = {
    "bound": "online",

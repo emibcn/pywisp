@@ -6,7 +6,7 @@
 # PyWisp installation
 ## Install pywisp
 ```shell
-pip3 install --user pywisp-emibcn
+pip3 install --user pywisp_emibcn
 ```
 
 ## Configure PyWisp

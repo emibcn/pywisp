@@ -6,8 +6,8 @@ from importlib import import_module
 from pprint import pprint
 
 # Internal imports
-from pywisp.wisp import Wisp
-from pywisp.sshdevice import backup_devices
+from pywisp_emibcn.wisp import Wisp
+from pywisp_emibcn.sshdevice import backup_devices
 
 class PyWisp():
 
