@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from pywisp.pywisp import PyWisp
-from pywisp.wisp import Wisp
-from pywisp.mikrotik import MTDevice
+from pywisp_emibcn.pywisp import PyWisp
+from pywisp_emibcn.wisp import Wisp
+from pywisp_emibcn.mikrotik import MTDevice
 
 # Create a WISP Mixin
 class MyWisp(Wisp):

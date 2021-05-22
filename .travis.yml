@@ -13,7 +13,7 @@ python:
   - "pypy3"
 # command to install dependencies
 install:
-  - pip install -r pywisp/requirements.txt
+  - pip install -r pywisp_emibcn/requirements.txt
   - pip install .
 # command to run tests
 script: pytest

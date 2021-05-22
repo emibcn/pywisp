@@ -6,14 +6,14 @@
 # PyWisp installation
 ## Install pywisp
 ```shell
-pip3 install --user git+https://github.com/emibcn/pywisp.git
+pip3 install --user pywisp_emibcn
 ```
 
 ## Configure PyWisp
 Then configure as per [~/.pywisp](#pywisp-config-file-pywisp)
 
 Finally, create the python script which implements the WISP infrastructure and authentication
-mechanisms, as per [wisp.py](#wisp-infrastructure-and-host-authentication-definitions-envhomemywispwisppy)
+mechanisms, as per [wisp.py](#wisp-infrastructure-and-host-authentication-definitions)
 
 # PyWisp usage
 ```
@@ -106,7 +106,8 @@ ac = /var/backups/mywisp/ac/
 mt = /var/backups/mywisp/mt/
 ```
 
-# WISP infrastructure and host authentication definitions `${env:HOME}/MyWISP/wisp.py`
+# WISP infrastructure and host authentication definitions
+## `${env:HOME}/MyWISP/wisp.py`
 In [this example](/examples/Wisp_1.py), we hardcode relations between IPs, some device names, users and passwords. We could be getting those relations from where ever, for example, an SQL database, a secure wallet downloaded from an S3, an spreadsheet at GoogleDocs (sic), an internal REST API, etc. Examples are welcome via pull request.
 
 You can add more types of devices (for example, Mimosa) subclassing [`SSHDevice`](/pywisp/sshdevice.py) and instantiating it correctly from your `wisp.py`. If you do so, I appreciate pull requests ;) 

@@ -85,13 +85,13 @@ jobs:
     
     - name: Install dependencies
       run: |
-        pip install -r pywisp/requirements.txt
+        pip install -r pywisp_emibcn/requirements.txt
         pip install pytest coverage
         pip install .
 
     - name: Run tests
       run: |
-        coverage run --branch --include pywisp/\* -m pytest
+        coverage run --branch --include pywisp_emibcn/\* -m pytest
         coverage xml
 
     - name: Code Coverage Summary Report (Text & Value)

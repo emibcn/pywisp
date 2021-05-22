@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from pywisp.aircontrol import ACSession
+from pywisp_emibcn.aircontrol import ACSession
 from pprint import pprint
 
 class Wisp():
