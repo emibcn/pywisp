@@ -94,14 +94,34 @@ jobs:
         coverage run --branch --include pywisp/\* -m pytest
         coverage xml
 
-    - name: Check test coverage
-      uses: johanvanhelden/gha-clover-test-coverage-check@v1
-      id: coverage
+    - name: Code Coverage Summary Report (Text & Value)
+      uses: irongut/CodeCoverageSummary@v1.0.1
       with:
-        percentage: 50
-        exit: 0
-        rounded-precision: 2
-        filename: "coverage.xml"
+        filename: coverage.xml
+        output: both
+
+    - name: Check code coverage
+      id: coverage
+      env:
+        VALUE: "Branch Rate"
+      run: |
+        COVERAGE="$( cat code-coverage-results.txt | egrep "^${VALUE}" | sed -e 's#^.* \([0-9]*\)%.*#\1#' )"
+        echo "##[set-output name=coverage;]${COVERAGE}"
+        echo "##[set-output name=coverage-rounded-display;]${COVERAGE}%"
+
+    - name: Code Coverage Summary Report (Markdown)
+      uses: irongut/CodeCoverageSummary@v1.0.1
+      with:
+        filename: coverage.xml
+        output: file
+        format: markdown
+
+    - name: Comment PR with code coverage
+      uses: machine-learning-apps/pr-comment@1.0.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        path: code-coverage-results.md
 
   badge:
 
@@ -180,3 +200,25 @@ jobs:
         echo "Badge image for Markdown: ${MARKDOWN}"
         echo "##[set-output name=url;]${URL}"
         echo "##[set-output name=markdown;]${MARKDOWN}"
+
+  comment_pr_badge:
+    name: Comment on PR with generated badge
+    needs: [pre_ci, badge]
+    if: ${{ github.event_name == 'pull_request' && github.actor == github.repository_owner }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Generate comment file with test coverage badge
+      shell: bash
+      env:
+        BADGE: ${{ needs.badge.outputs.markdown }}
+      run: |
+        echo "Badge: ${BADGE}"
+        echo "${BADGE}" > output.md
+
+    - name: Comment PR with test coverage badge
+      uses: marocchino/sticky-pull-request-comment@v2
+      with:
+        recreate: true
+        path: code-coverage-results.md
