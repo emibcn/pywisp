@@ -110,9 +110,9 @@ mt = /var/backups/mywisp/mt/
 ## `${env:HOME}/MyWISP/wisp.py`
 In [this example](/examples/Wisp_1.py), we hardcode relations between IPs, some device names, users and passwords. We could be getting those relations from where ever, for example, an SQL database, a secure wallet downloaded from an S3, an spreadsheet at GoogleDocs (sic), an internal REST API, etc. Examples are welcome via pull request.
 
-You can add more types of devices (for example, Mimosa) subclassing [`SSHDevice`](/pywisp/sshdevice.py) and instantiating it correctly from your `wisp.py`. If you do so, I appreciate pull requests ;) 
+You can add more types of devices (for example, Mimosa) subclassing [`SSHDevice`](/pywisp_emibcn/sshdevice.py) and instantiating it correctly from your `wisp.py`. If you do so, I appreciate pull requests ;) 
 
-You can create a complete subclassed [`Wisp`](/pywisp/wisp.py) object and pass it to `PyWisp` on instantiation. This way you can use PyWisp from within other projects, like from your Django APP or from your Zabbix scripts, mantaining your infrastructure and authentication mechanisms centralized.
+You can create a complete subclassed [`Wisp`](/pywisp_emibcn/wisp.py) object and pass it to `PyWisp` on instantiation. This way you can use PyWisp from within other projects, like from your Django APP or from your Zabbix scripts, mantaining your infrastructure and authentication mechanisms centralized.
 
 
 # TODO list
