@@ -17,7 +17,7 @@ setup(
     packages = ['pywisp'],
     py_modules=['pywisp', 'pywisp/mikrotik', 'pywisp/aircontrol', 'pywisp/sshdevice'],
     scripts = ["bin/pywisp"],
-    install_requires = ['requests', 'paramiko', 'termcolor'],
+    install_requires = ['requests', 'paramiko', 'termcolor', "argparse", "configparser"],
     include_package_data = True,
     classifiers = [
         "Environment :: Command line",

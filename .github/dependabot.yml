@@ -1,0 +1,15 @@
+version: 2
+updates:
+  - package-ecosystem: "python"
+    directory: "/pywisp"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "python"
+      include: "scope"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      # Check for updates to GitHub Actions every weekday
+      interval: "daily"

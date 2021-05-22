@@ -1,5 +1,5 @@
-requests
-paramiko
-termcolor
-argparse
-configparser
+requests==2.25.1
+paramiko==2.7.2
+termcolor==1.1.0
+argparse==1.4.0
+configparser==5.0.2
