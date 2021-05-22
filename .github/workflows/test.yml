@@ -64,6 +64,8 @@ jobs:
       coverage: ${{ steps.coverage.outputs.coverage }}
       coverage-rounded-display: ${{ steps.coverage.outputs.coverage-rounded-display }}
 
+    steps:
+
     - uses: actions/setup-python@v2
       with:
         python-version: '3.x' # Version range or exact version of a Python version to use, using SemVer's version range syntax
@@ -177,4 +179,3 @@ jobs:
         echo "Badge image for Markdown: ${MARKDOWN}"
         echo "##[set-output name=url;]${URL}"
         echo "##[set-output name=markdown;]${MARKDOWN}"
-
