@@ -1,3 +1,5 @@
+![Coverage](https://raw.githubusercontent.com/emibcn/pywisp/badges/master/test-coverage.svg)
+[![Python CI](https://github.com/emibcn/pywisp/actions/workflows/test.yml/badge.svg)](https://github.com/emibcn/pywisp/actions/workflows/test.yml)
 [![Build Status](https://travis-ci.com/emibcn/pywisp.svg?branch=master)](https://travis-ci.com/emibcn/pywisp)
 
 
