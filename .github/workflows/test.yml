@@ -225,3 +225,50 @@ jobs:
       with:
         recreate: true
         path: output.md
+
+  publish:
+
+    # Only generate and publish if these conditions are met:
+    # - Commit message does not contains #no-publish
+    # - The test step ended successfully
+    # - One of these is met:
+    #   - This is a pull request event and the pull has been merged
+    #   - This is a push event and the push event is on branch 'master'
+    name: Publish code to GitHub Pages
+    needs: [pre_ci, test]
+    if: ${{ !contains(github.event.head_commit.message, '#no-publish') && (( github.event_name == 'pull_request' && github.event.pull_request.merged == true ) || github.ref == 'refs/heads/master' ) }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.x' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+
+    - uses: actions/checkout@v2
+
+    - name: Cache pip
+      uses: actions/cache@v2
+      with:
+        # This path is specific to Ubuntu
+        path: ~/.cache/pip
+        # Look to see if there is a cache hit for the corresponding requirements file
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          ${{ runner.os }}-
+    
+    - name: Install dependencies
+      run: |
+        pip install -r pywisp_emibcn/requirements.txt
+        pip install build twine
+
+    - name: Build package
+      env:
+        # Use dedicated PyPi token from secrets
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYWISP_EMIBCN }}
+      run: |
+        python3 -m build
+        python3 -m twine upload --repository pypi dist/*
