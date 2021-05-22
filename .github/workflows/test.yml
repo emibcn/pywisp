@@ -54,9 +54,9 @@ jobs:
         fi
         echo "##[set-output name=branch;]${EXPORT_VALUE}"
 
-  test:
+  test-code:
 
-    name: Test building
+    name: Test code
     runs-on: ubuntu-latest
 
     # Map a step output to a job output
@@ -82,7 +82,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pip-
           ${{ runner.os }}-
-    
+
     - name: Install dependencies
       run: |
         pip install -r pywisp_emibcn/requirements.txt
@@ -125,6 +125,55 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         path: code-coverage-results.md
+
+  test-build:
+
+    name: Test build
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.x' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+
+    - uses: actions/checkout@v2
+
+    - name: Cache pip
+      uses: actions/cache@v2
+      with:
+        # This path is specific to Ubuntu
+        path: ~/.cache/pip
+        # Look to see if there is a cache hit for the corresponding requirements file
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          ${{ runner.os }}-
+
+    - name: Install dependencies
+      run: |
+        pip install -r pywisp_emibcn/requirements.txt
+        pip install build
+
+    - name: Build package
+      run: |
+        python3 -m build
+
+  test:
+    name: Tests waiter
+    needs: [test-code, test-build]
+    runs-on: ubuntu-latest
+    outputs:
+      coverage: ${{ needs.test-code.outputs.coverage }}
+      coverage-rounded-display: ${{ needs.test-code.outputs.coverage-rounded-display }}
+    steps:
+    - name: Check test coverage
+      env:
+        COVERAGE: ${{ needs.test-code.outputs.coverage }}
+        COVERAGE_ROUNDED: ${{ needs.test-code.outputs.coverage-rounded-display }}
+      run: |
+        echo "Coverage: ${COVERAGE}"
+        echo "Coverage Rounded: ${COVERAGE_ROUNDED}"
 
   badge:
 
@@ -258,17 +307,20 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pip-
           ${{ runner.os }}-
-    
+
     - name: Install dependencies
       run: |
         pip install -r pywisp_emibcn/requirements.txt
         pip install build twine
 
     - name: Build package
+      run: |
+        python3 -m build
+
+    - name: Publish package
       env:
         # Use dedicated PyPi token from secrets
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYWISP_EMIBCN }}
       run: |
-        python3 -m build
         python3 -m twine upload --repository pypi dist/*
