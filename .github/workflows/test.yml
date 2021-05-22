@@ -86,7 +86,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r pywisp/requirements.txt
-        pip install pytest covegare
+        pip install pytest coverage
         pip install .
 
     - name: Run tests
