@@ -2,6 +2,7 @@
 *~
 DEADJOE
 .#*
+.*.sw*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -10,8 +11,11 @@ __pycache__/
 # Distribution / packaging / testing
 build/
 dist/
+env/
 *.egg-info/
 .pytest_cache/
+.coverage
+coverage.xml
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
