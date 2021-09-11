@@ -1,7 +1,7 @@
 
 from setuptools import setup, find_packages
 
-VERSION = (0, 0, 10)
+VERSION = (0, 0, 11)
 __version__ = '.'.join(map(str, VERSION))
 
 with open("README.md", "r", encoding="utf-8") as fh:
