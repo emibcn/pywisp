@@ -95,7 +95,7 @@ jobs:
         coverage xml
 
     - name: Code Coverage Summary Report (Text & Value)
-      uses: irongut/CodeCoverageSummary@v1.0.2
+      uses: irongut/CodeCoverageSummary@v1.0.3
       with:
         filename: coverage.xml
         output: both
@@ -110,7 +110,7 @@ jobs:
         echo "##[set-output name=coverage-rounded-display;]${COVERAGE}%"
 
     - name: Code Coverage Summary Report (Markdown)
-      uses: irongut/CodeCoverageSummary@v1.0.2
+      uses: irongut/CodeCoverageSummary@v1.0.3
       if: ${{ github.event_name == 'pull_request' && github.actor == github.repository_owner }}
       with:
         filename: coverage.xml
