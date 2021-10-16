@@ -31,7 +31,8 @@ pywisp.args.getip = True
 device = pywisp.wisp.get_host(pywisp.args.host)
 assert device != None, 'get_host should have returned a list or a device'
 if not len(device):
-    raise AssertionError('get_host should have returned a list with at least one device')
+    raise AssertionError(
+        'get_host should have returned a list with at least one device')
 
 # Test `get_ip` output
 
