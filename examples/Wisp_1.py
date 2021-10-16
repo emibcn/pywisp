@@ -145,8 +145,6 @@ class MyWISP():
 
         return devices
 
-        return []
-
     @staticmethod
     def get_dhcp_clients_from_ccr(ccr, password_ccr="", password_devices="", find=""):
         '''Connects to a CCR and gets a filtered list of its DHCP leases'''
