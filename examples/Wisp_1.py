@@ -33,8 +33,11 @@ PASSWORD_CLIENT = "MyNotSoSecurePasswordForSomeClients"
 class MyWISP():
     '''pywisp.Wisp mixin implementation'''
 
-    def get_ac_devices(self, devices=[]):
+    @staticmethod
+    def get_ac_devices(devices=None):
         '''Generate antennas list (with credentials)'''
+        if devices is None:
+            devices = []
         antenas = []
         for dev in devices:
             password = PASSWORD
@@ -60,8 +63,6 @@ class MyWISP():
             try:
                 repes.append(ACDevice(repetidor, username='admin',
                              password=PASSWORD, rsa=ID_RSA))
-            except (KeyboardInterrupt, SystemExit):
-                raise
             except Exception as e:
                 print("Hi ha hagut un problema connectant amb {}: {}".format(
                     repe.name, str(e)))
@@ -101,9 +102,8 @@ class MyWISP():
     def get_host(self, name, deep=False, from_br=None):
 
         # Per IP
-        if is_ip(name):
-            if name in self.get_ccrs_ips():
-                return [MTDevice({}, username="admin", password=PASSWORD, ip=name, rsa=ID_RSA)]
+        if is_ip(name) and name in self.get_ccrs_ips():
+            return [MTDevice({}, username="admin", password=PASSWORD, ip=name, rsa=ID_RSA)]
 
         # OtherWISP
         if name.startswith('vacc'):
@@ -118,39 +118,37 @@ class MyWISP():
             return self.get_ccrs()
 
         # Repetidors de client (MT)
-        elif name.endswith('-rt'):
+        if name.endswith('-rt'):
 
             return self.get_rts(name, self.get_ccrs())
 
-        # Aircontrol
+        # Get devices list
+        if not deep:
+            clients = self.ac.getDevices(name=name)
         else:
+            clients = self.get_aircontrol_deep(name, from_br)
 
-            # Get devices list
-            if not deep:
-                clients = self.ac.getDevices(name=name)
+        # Find device
+        devices = []
+        for client in clients:
+
+            # Bug AF old
+            if client['properties']['hostname'].startswith('AF'):
+                password = PASSWORD[:8]
             else:
-                clients = self.get_aircontrol_deep(name, from_br)
+                password = PASSWORD
 
-            # Find device
-            devices = []
-            for client in clients:
+            print(
+                "Descarreguem {} - {}".format(client['properties']['hostname'], client['properties']['mac']))
+            devices.append(ACDevice(client, username='admin',
+                           password=password, rsa=ID_RSA))
 
-                # Bug AF old
-                if client['properties']['hostname'].startswith('AF'):
-                    password = PASSWORD[:8]
-                else:
-                    password = PASSWORD
-
-                print(
-                    "Descarreguem {} - {}".format(client['properties']['hostname'], client['properties']['mac']))
-                devices.append(ACDevice(client, username='admin',
-                               password=password, rsa=ID_RSA))
-
-            return devices
+        return devices
 
         return []
 
-    def get_dhcp_clients_from_ccr(self, ccr, password_ccr="", password_devices="", find=""):
+    @staticmethod
+    def get_dhcp_clients_from_ccr(ccr, password_ccr="", password_devices="", find=""):
         '''Connects to a CCR and gets a filtered list of its DHCP leases'''
 
         # Get leases list
@@ -172,7 +170,8 @@ class MyWISP():
                        password=password_ccr, ip=ip, rsa=ID_RSA)
         return self.get_dhcp_clients_from_ccr(ccr, password_ccr=password_ccr, password_devices=password_devices, find=find), ccr
 
-    def get_otherwisp_aps_ips(self):
+    @staticmethod
+    def get_otherwisp_aps_ips():
         return [
             "10.111.0." + str(num)
             for num in [5, 6, 7, 8, 9, 13, 14, 16, 17, 18, 19, 20, 26]
@@ -185,7 +184,8 @@ class MyWISP():
             for ip in self.get_otherwifi_aps_ips()
         ]
 
-    def get_ccrs_ips(self):
+    @staticmethod
+    def get_ccrs_ips():
         return ["10.255.255." + str(num) for num in [2, 3, 4, 5, 6, 7, 8, 9, 254]]
 
     def get_ccrs(self):

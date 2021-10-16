@@ -43,7 +43,8 @@ class MTDevice(SSHDevice):
         with open(path + '/' + self.backup_file, "wb") as myfile:
             myfile.write(stdout.read())
 
-    def parse_list(self, stdout):
+    @staticmethod
+    def parse_list(stdout):
         '''Parses a tipical 'terse' Mikrotik list'''
 
         # Consume first line (column titles, flags)
@@ -79,11 +80,10 @@ class MTDevice(SSHDevice):
             if len(element) > 0:
                 list.append(element)
 
-        del lines
-
         return list
 
-    def parse_values(self, stdout):
+    @staticmethod
+    def parse_values(stdout):
         '''Parses a tipical 'variable: value' list'''
 
         element = {}
@@ -117,7 +117,7 @@ class MTDevice(SSHDevice):
             where += ' host-name~"{}"'.format(name)
 
         # Filter (un)bound devices
-        if bound != None:
+        if bound is not None:
             where += ' status{}=bound'.format('' if bound else '!')
 
         # Add filters to command

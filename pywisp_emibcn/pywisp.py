@@ -200,8 +200,7 @@ class PyWisp():
             if 'ac' in config:
                 wisp_conf['ac_conf'] = {
                     name: value for name, value in config.items('ac')}
-                self.log.debug("Loaded AC configuration:  %s" %
-                               wisp_conf['ac_conf'])
+                self.log.debug("Loaded AC configuration:  %s", wisp_conf['ac_conf'])
 
             if 'wisp' in config:
                 self.log.debug("Detected extra class for managing wisp.")
@@ -223,8 +222,7 @@ class PyWisp():
                                 "Merging class %s to our WISP definition..." % config['wisp']['class'])
                             wisp = type(
                                 'Wisp' + config['wisp']['class'], (cls, Wisp), {})(**wisp_conf)
-                            self.log.debug("Wisp Class: %s" %
-                                           type(wisp).__name__)
+                            self.log.debug("Wisp Class: %s", type(wisp).__name__)
             else:
                 wisp = Wisp(**wisp_conf)
 

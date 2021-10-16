@@ -191,8 +191,10 @@ class ACSession():
         # Save cookies (session)
         self.cookies = resp.cookies
 
-    def sendRequest(self, path, method="get", body={}):
+    def sendRequest(self, path, method="get", body=None):
         '''Send request to AirControl API server using cookies from login'''
+        if body is None:
+            body = {}
         URL = self.URL + self.URL_path + path
         arguments = {
             'cookies': self.cookies,
@@ -272,7 +274,8 @@ class ACSession():
             "/devices/webui", method='post', body=str(list))
         return result.json()['results']
 
-    def patchDeviceCreate(self, deviceId, patchDevice):
+    @staticmethod
+    def patchDeviceCreate(deviceId, patchDevice):
         '''Creates single device basic properties patch'''
 
         acceptedMods = {
@@ -304,7 +307,7 @@ class ACSession():
 
         patch = {}
         for name, value in acceptedMods.items():
-            if name in patchDevice and value == type(patchDevice[name]):
+            if name in patchDevice and value is type(patchDevice[name]):
                 patch[name] = patchDevice[name]
 
         patch['deviceId'] = deviceId

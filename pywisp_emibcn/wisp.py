@@ -96,8 +96,6 @@ class Wisp():
             try:
                 self.log.info("Download wifi stations from %s" % (repe.name))
                 clients_wifi = repetidor.getWifiStations()
-            except (KeyboardInterrupt, SystemExit):
-                raise
             except Exception as e:
                 self.log.warning(
                     "There was a problem connecting to %s: %s" % (repe.name, str(e)))
