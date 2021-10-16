@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import datetime, paramiko, base64, os, socket
+import datetime
+import paramiko
+import base64
+import os
+import socket
 from termcolor import colored
 from pprint import pprint
 try:
@@ -12,13 +16,13 @@ except ImportError:
 
 class SSHDevice:
 
-    ip         = ""
-    mac        = ""
-    __name    = ""
+    ip = ""
+    mac = ""
+    __name = ""
     username = ""
     password = ""
-    rsa        = ""
-    status    = ""
+    rsa = ""
+    status = ""
     backup_file_base = ""
 
     client = False
@@ -26,13 +30,13 @@ class SSHDevice:
     def __init__(self, ip="", mac="", name="", username="", password="", rsa="", status="", backup_file=""):
 
         # Set minimal device data
-        self.ip         = ip
-        self.mac        = mac
-        self.name      = name
+        self.ip = ip
+        self.mac = mac
+        self.name = name
         self.username = username
         self.password = password
-        self.rsa        = rsa
-        self.status    = status
+        self.rsa = rsa
+        self.status = status
         self.backup_file_base = backup_file
 
     # Use setters anf getters for properties needing expensive actions
@@ -70,10 +74,10 @@ class SSHDevice:
         # Set backup file name
         if not self.backup_file_base:
             today = datetime.date.today()
-            self.backup_file = "{name}.{date}.bkp".format( name=self.name, date=today.strftime('%Y-%m-%d') )
+            self.backup_file = "{name}.{date}.bkp".format(
+                name=self.name, date=today.strftime('%Y-%m-%d'))
         else:
             self.backup_file = self.backup_file_base
-
 
     def login(self):
         '''Open SSH connection only if it is not already opened'''
@@ -85,12 +89,13 @@ class SSHDevice:
 
             # Try login with user/password
             try:
-                self.client.connect(self.ip, username=self.username, password=self.password, timeout=5, allow_agent=False, look_for_keys=False)
+                self.client.connect(self.ip, username=self.username, password=self.password,
+                                    timeout=5, allow_agent=False, look_for_keys=False)
             except:
                 # Try login with RSA key
                 key = paramiko.RSAKey.from_private_key_file(self.rsa)
-                self.client.connect(self.ip, username=self.username, timeout=5, pkey=key)
-
+                self.client.connect(
+                    self.ip, username=self.username, timeout=5, pkey=key)
 
     def logout(self):
         '''Close SSH connection only if it is opened'''
@@ -100,13 +105,11 @@ class SSHDevice:
             del self.client
             self.client = False
 
-
     def command(self, command):
         '''Send command to device and return (stdin, stdout, stderr) streams tuple'''
         self.login()
 
         return self.client.exec_command(command, timeout=5)
-
 
     def shell(self, *args, **kwargs):
         '''Opens a TTY shell'''
@@ -119,8 +122,8 @@ class SSHDevice:
         interactive.interactive_shell(chan)
         chan.close()
 
-
     # Higiene
+
     def __del__(self):
         self.logout()
 
@@ -131,7 +134,6 @@ class SSHDevice:
             return u"{} : {}".format(self.name, self.ip)
 
 
-
 def backup_devices_list(devices, path):
     '''Do backup on an ACDevice list'''
     i = 1
@@ -140,20 +142,21 @@ def backup_devices_list(devices, path):
     for device in devices:
 
         # Debug:
-        #if i == 10:
+        # if i == 10:
         #    break
 
         print(u"{index}.- {device}".format(index=i, device=str(device)))
 
         # Debug:
-        #if i == 1:
+        # if i == 1:
         #    pprint(device.data)
         #    break
 
         warning = ""
         file = path + "/" + device.backup_file
         if os.path.exists(file) and os.stat(file).st_size > 0:
-            print(u"    " + colored("[WARNING] Backup ja realitzat. Saltem.", 'yellow', attrs=['bold']))
+            print(
+                u"    " + colored("[WARNING] Backup ja realitzat. Saltem.", 'yellow', attrs=['bold']))
             continue
 
         try:
@@ -161,7 +164,8 @@ def backup_devices_list(devices, path):
         except paramiko.ssh_exception.AuthenticationException as e:
             warning = u"[WARNING] Credencials incorrectes! (" + str(e) + ")"
         except paramiko.ssh_exception.NoValidConnectionsError as e:
-            warning = u"[WARNING] No es pot establir connexió al port 22! (" + str(e) + ")"
+            warning = u"[WARNING] No es pot establir connexió al port 22! (" + str(
+                e) + ")"
         except socket.timeout as e:
             warning = u"[WARNING] Servidor no abastable! (" + str(e) + ")"
         except KeyboardInterrupt as e:
@@ -209,18 +213,22 @@ def backup_devices(devices, path, retries=3):
         # Decrease counter
         retries -= 1
         if retries > 0:
-            print(colored(u"\nTornem a intentar amb les antenes que hagin fallat (queden {} intents, {} fallats)\n".format(retries-1, len(failed)), 'white', attrs=['bold']))
+            print(colored(u"\nTornem a intentar amb les antenes que hagin fallat (queden {} intents, {} fallats)\n".format(
+                retries-1, len(failed)), 'white', attrs=['bold']))
 
     # Print totals
     print(u"\n")
-    print(colored(u"Descarregats {ok} backups".format(ok=ok), 'green', attrs=['bold']))
-    print(colored(u"NO Descarregats {ko} backups".format(ko=len(failed)), 'red', attrs=['bold']))
+    print(colored(u"Descarregats {ok} backups".format(
+        ok=ok), 'green', attrs=['bold']))
+    print(colored(u"NO Descarregats {ko} backups".format(
+        ko=len(failed)), 'red', attrs=['bold']))
     print(u"\n")
 
     # Print failed
     if len(failed) > 0:
         print(u"Failed %d devices:" % (len(failed)))
         for f in failed:
-            print(u" - {device}: {warning}".format(device=str(f), warning=colored(f.warning, 'red', attrs=['bold'])))
+            print(u" - {device}: {warning}".format(device=str(f),
+                  warning=colored(f.warning, 'red', attrs=['bold'])))
 
         print(u"\n")

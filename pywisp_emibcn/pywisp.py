@@ -1,13 +1,18 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import argparse, configparser, os, pkgutil, logging
+import argparse
+import configparser
+import os
+import pkgutil
+import logging
 from importlib import import_module
 from pprint import pprint
 
 # Internal imports
 from pywisp_emibcn.wisp import Wisp
 from pywisp_emibcn.sshdevice import backup_devices
+
 
 class PyWisp():
 
@@ -24,7 +29,6 @@ class PyWisp():
     class MyCustomFormatter(argparse.ArgumentDefaultsHelpFormatter, argparse.RawDescriptionHelpFormatter):
         pass
 
-
     def __init__(self, wisp=None):
         '''Parses arguments and configurations'''
 
@@ -37,19 +41,18 @@ class PyWisp():
         if wisp:
             self.wisp = wisp
 
-
     def setup_logger(self, name=__name__):
         '''Setup a logger'''
         class OneLineExceptionFormatter(logging.Formatter):
-             def formatException(self, exc_info):
-                  result = super().formatException(exc_info)
-                  return repr(result)
+            def formatException(self, exc_info):
+                result = super().formatException(exc_info)
+                return repr(result)
 
-             def format(self, record):
-                  result = super().format(record)
-                  if record.exc_text:
-                        result = result.replace("n", "")
-                  return result
+            def format(self, record):
+                result = super().format(record)
+                if record.exc_text:
+                    result = result.replace("n", "")
+                return result
 
         handler = logging.StreamHandler()
         formatter = OneLineExceptionFormatter(logging.BASIC_FORMAT)
@@ -59,7 +62,6 @@ class PyWisp():
         log.addHandler(handler)
 
         return log
-
 
     def parse_device(self, device):
         '''Parses a device using arguments passed to program'''
@@ -91,82 +93,82 @@ class PyWisp():
         if 'ssh' in self.args and self.args.ssh:
             device.shell()
 
-
     def parse_arguments(self, parser=argparse.ArgumentParser(formatter_class=MyCustomFormatter)):
         '''Parses arguments passed to program into a dict'''
 
         parser.add_argument("--conf", type=str,
-                                  default="{}/{}".format(os.getenv('HOME'), '.pywisp'),
-                                  help="Reads configuration from this file instead of default")
+                            default="{}/{}".format(os.getenv('HOME'),
+                                                   '.pywisp'),
+                            help="Reads configuration from this file instead of default")
 
         sp = parser.add_subparsers()
 
-        b_ac = sp.add_parser("backup_ac",formatter_class=self.MyCustomFormatter,
-                                  help="Backup all AirControl devices")
-        b_ac.add_argument("backup_ac_path", type=str, nargs='?',metavar="PATH",
-                                  help="Directory in which save backup files")
+        b_ac = sp.add_parser("backup_ac", formatter_class=self.MyCustomFormatter,
+                             help="Backup all AirControl devices")
+        b_ac.add_argument("backup_ac_path", type=str, nargs='?', metavar="PATH",
+                          help="Directory in which save backup files")
         b_ac.add_argument("--retries",
-                                  action="store_true", default=3,
-                                  help="Retries for every device before stop trying")
+                          action="store_true", default=3,
+                          help="Retries for every device before stop trying")
 
-        b_mt = sp.add_parser("backup_mt",formatter_class=self.MyCustomFormatter,
-                                  help="Backup all Mikrotik devices")
-        b_mt.add_argument("backup_mt_path", type=str, nargs='?',metavar="PATH",
-                                  help="Directory in which save backup files")
+        b_mt = sp.add_parser("backup_mt", formatter_class=self.MyCustomFormatter,
+                             help="Backup all Mikrotik devices")
+        b_mt.add_argument("backup_mt_path", type=str, nargs='?', metavar="PATH",
+                          help="Directory in which save backup files")
         b_mt.add_argument("--retries",
-                                  action="store_true", default=3,
-                                  help="Retries for every device before stop trying")
+                          action="store_true", default=3,
+                          help="Retries for every device before stop trying")
 
-        reorder = sp.add_parser("reorder_ac",formatter_class=self.MyCustomFormatter,
-                                  help="Reorder branches from AirControl devices")
+        reorder = sp.add_parser("reorder_ac", formatter_class=self.MyCustomFormatter,
+                                help="Reorder branches from AirControl devices")
 
         host_parser = sp.add_parser("host", formatter_class=self.MyCustomFormatter,
-                                  help="Find device by it's hostname, MAC or IP")
+                                    help="Find device by it's hostname, MAC or IP")
         host_parser.add_argument("host", type=str,
-                                  help="Devices hostname, MAC or IP")
+                                 help="Devices hostname, MAC or IP")
 
         host_parser.add_argument("--deep",
-                                  action="store_true",
-                                  help="Find device by it's hostname, MAC or IP, using all BRs station list as haystack")
+                                 action="store_true",
+                                 help="Find device by it's hostname, MAC or IP, using all BRs station list as haystack")
         host_parser.add_argument("--from-br", type=str,
-                                  help="Deep find only in this BR")
+                                 help="Deep find only in this BR")
 
         host_parser.add_argument("--getname",
-                                  action="store_true",
-                                  help="Gets device name")
+                                 action="store_true",
+                                 help="Gets device name")
         host_parser.add_argument("--getjson",
-                                  action="store_true",
-                                  help="Gets device full data")
+                                 action="store_true",
+                                 help="Gets device full data")
         host_parser.add_argument("--getip",
-                                  action="store_true",
-                                  help="Gets device IP")
+                                 action="store_true",
+                                 help="Gets device IP")
         host_parser.add_argument("--getid",
-                                  action="store_true",
-                                  help="Gets device ID")
+                                 action="store_true",
+                                 help="Gets device ID")
         host_parser.add_argument("--getmac",
-                                  action="store_true",
-                                  help="Gets device MAC")
+                                 action="store_true",
+                                 help="Gets device MAC")
         host_parser.add_argument("--getdhcp",
-                                  action="store_true",
-                                  help="Gets device's DHCP leases/stations")
+                                 action="store_true",
+                                 help="Gets device's DHCP leases/stations")
         host_parser.add_argument("--getwifi",
-                                  action="store_true",
-                                  help="Gets device's wifi status")
+                                 action="store_true",
+                                 help="Gets device's wifi status")
         host_parser.add_argument("--getwifistations",
-                                  action="store_true",
-                                  help="Gets device's wifi stations")
+                                 action="store_true",
+                                 help="Gets device's wifi stations")
         host_parser.add_argument("--getstatus",
-                                  action="store_true",
-                                  help="Gets device status")
+                                 action="store_true",
+                                 help="Gets device status")
         host_parser.add_argument("--url",
-                                  action="store_true",
-                                  help="Gets an authenticated URL to connect to the device using browser")
+                                 action="store_true",
+                                 help="Gets an authenticated URL to connect to the device using browser")
 
         host_parser.add_argument("--ssh",
-                                  action="store_true",
-                                  help="Connects to device using SSH")
+                                 action="store_true",
+                                 help="Connects to device using SSH")
         host_parser.add_argument("--cmd", type=str,
-                                  help="Connects to device and run a command")
+                                 help="Connects to device and run a command")
 
         args = parser.parse_args()
 
@@ -174,10 +176,10 @@ class PyWisp():
 
         return args, parser, sp
 
-
     def parse_configuration(self, file_name):
         '''Parses configuration file into a dict/class'''
-        config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
+        config = configparser.ConfigParser(
+            interpolation=configparser.ExtendedInterpolation())
 
         wisp = None
         wisp_conf = {'getlog': self.setup_logger}
@@ -185,7 +187,8 @@ class PyWisp():
         if os.path.isfile(file_name):
 
             # Populate the [env] section
-            env_dict = {name: os.path.expandvars(value.replace('$', '$$')) for name, value in os.environ.items()}
+            env_dict = {name: os.path.expandvars(value.replace(
+                '$', '$$')) for name, value in os.environ.items()}
             config.read_dict(
                 {"env": env_dict},
                 source='<env>')
@@ -195,26 +198,33 @@ class PyWisp():
 
             wisp_conf['ac_conf'] = None
             if 'ac' in config:
-                wisp_conf['ac_conf'] = {name: value for name, value in config.items('ac')}
-                self.log.debug("Loaded AC configuration:  %s" % wisp_conf['ac_conf'])
+                wisp_conf['ac_conf'] = {
+                    name: value for name, value in config.items('ac')}
+                self.log.debug("Loaded AC configuration:  %s",
+                               wisp_conf['ac_conf'])
 
             if 'wisp' in config:
                 self.log.debug("Detected extra class for managing wisp.")
 
                 if 'path' in config['wisp'] and 'module' in config['wisp'] and 'class' in config['wisp']:
-                    self.log.debug("Detected WISP: %s || %s || %s" % (config['wisp']['path'], config['wisp']['module'], config['wisp']['class']))
-                    path = os.path.dirname( config['wisp']['path'] )
+                    self.log.debug("Detected WISP: %s || %s || %s" % (
+                        config['wisp']['path'], config['wisp']['module'], config['wisp']['class']))
+                    path = os.path.dirname(config['wisp']['path'])
 
                     for (finder, name, _) in pkgutil.iter_modules([path]):
                         if name == config['wisp']['module']:
-                            self.log.debug("Loading module %s from file '%s'..." % (config['wisp']['module'], config['wisp']['path']))
+                            self.log.debug("Loading module %s from file '%s'..." % (
+                                config['wisp']['module'], config['wisp']['path']))
                             loader = finder.find_module(name)
                             mod = loader.load_module()
                             cls = getattr(mod, config['wisp']['class'])
 
-                            self.log.debug("Merging class %s to our WISP definition..." % config['wisp']['class'])
-                            wisp = type('Wisp' + config['wisp']['class'], (cls,Wisp), {})(**wisp_conf)
-                            self.log.debug("Wisp Class: %s" % type(wisp).__name__)
+                            self.log.debug(
+                                "Merging class %s to our WISP definition..." % config['wisp']['class'])
+                            wisp = type(
+                                'Wisp' + config['wisp']['class'], (cls, Wisp), {})(**wisp_conf)
+                            self.log.debug("Wisp Class: %s",
+                                           type(wisp).__name__)
             else:
                 wisp = Wisp(**wisp_conf)
 
@@ -264,14 +274,15 @@ def main():
         pywisp.args.host = pywisp.args.host.lower().strip()
 
         # Get devices
-        devices = pywisp.wisp.get_host(pywisp.args.host, deep=pywisp.args.deep, from_br=pywisp.args.from_br)
+        devices = pywisp.wisp.get_host(
+            pywisp.args.host, deep=pywisp.args.deep, from_br=pywisp.args.from_br)
         if devices == None or len(devices) == 0:
             pywisp.log.error("No devices found: '%s'" % (pywisp.args.host))
             return 1
 
         # If its not a list, convert into it
         if type(devices) is not list:
-            devices = [ devices ]
+            devices = [devices]
 
         # Apply actions for every device found
         for device in devices:
