@@ -2,4 +2,4 @@ requests==2.26.0
 paramiko==2.7.2
 termcolor==1.1.0
 argparse==1.4.0
-configparser==5.0.2
+configparser==5.2.0
